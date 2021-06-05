@@ -27,11 +27,11 @@ pData(pd)
 #WCZYTANIE PLIKOW CEL Z OPISAMI I PRZYNALEZNOSCIA DO KLAS
 celDat = ReadAffy(filenames = rownames(pData(pd)), phenoData = pd, verbose = TRUE, 
                   celfile.path = sciezka)
-#NORMALIZACJA RMA
+#NORMALIZACJA RMA - przemyślenia Anety: jak robiliśmy projekt to kazał nam robić z expresso i precyzowac te warunki, bo coś tam, myślicie, ze może zostać jednak funkcja RMA?
 rma <- rma(celDat)
 
-#ZAPISANIE PLIKU JAKO OBIEKT KLASY EXPRESSIONSET
+#ZAPISANIE PLIKU JAKO OBIEKT KLASY EXPRESSIONSET - kolejne przemyślnia: @Patrycja mi w sumie to wszystko dobrze działało na tym etapie więc to nie tak, ze olałąm Twój kod, ale działa. xd
 save(rma, file="rma2.Rdata")
 
-# og�lnie jakby kto� chcia� to moze sie zastanowi� dlaczego wczytuje tylo 195 rekord�w, a nie wszystkie, czy to ju� jest jaka� filtracja? xd
+# ogólnie jakby ktoś chciał to moze sie zastanowić dlaczego wczytuje tylo 195 rekordów, a nie wszystkie, czy to już jest jakaś filtracja? xd
 operacje_na_sondach(rma)
