@@ -1,9 +1,9 @@
 operacje_na_sondach <- function(obiekt_expression_set) {
   
-  # EKSRTRAKCJE SOND
+  # EKSRTRAKCJE SOND  wyciągam ekspresję z obiektu
   ekspresja = exprs(obiekt_expression_set)
   
-  # ekspresja kontroli (ADENO)
+  # ekspresja kontroli (ADENO) - odtad obliczam dla każdej grupy średnią ekspresji, bo chyba będzie potezebna do filtracji, a na pewno do 5% sond
   indeksy_do_grupy_kontrolnej = which(obiekt_expression_set@phenoData@data[["ADENO"]] == "ADENO", arr.ind = TRUE)
   # kontrola = obiekt_expression_set@phenoData@data[["ADENO"]][which(obiekt_expression_set@phenoData@data[["ADENO"]] == "ADENO", arr.ind = TRUE)]
   ekspresja_kontroli = ekspresja[,indeksy_do_grupy_kontrolnej[[1]]:indeksy_do_grupy_kontrolnej[length(indeksy_do_grupy_kontrolnej)]] # ADENO
@@ -29,7 +29,7 @@ operacje_na_sondach <- function(obiekt_expression_set) {
   ekspresja_squamous = ekspresja[,indeksy_do_grupy_squamous[[1]]:indeksy_do_grupy_squamous[length(indeksy_do_grupy_squamous)]] # SQUAMOUS
   srednia_ekspresja_squamous = rowSums(ekspresja_squamous)/length(indeksy_do_grupy_squamous)
   
-  # FILTROWANIE SOND - wzrost o 30% wzgl�dem kontroli (ADENO) ?? No chyba, �e chodzi o filtrowanie 
+  # FILTROWANIE SOND - wzrost o 30% wzglêdem kontroli (ADENO) ?? No chyba, ¿e chodzi o filtrowanie  - no albo nie, dlaego to zostawiam póki co
   roznica = srednia_ekspresja_konroli - srednia_ekspresja_carcinoid
   
   wzrost_nazwy_badanie = names(roznica[which(roznica >= log2(1.3))])
@@ -47,7 +47,7 @@ operacje_na_sondach <- function(obiekt_expression_set) {
   najwieksza_srednia_ekspresja_5procent = head(kolejno, ile_sond_to_5_procent)
   najmniejsza_srednia_ekspresja_5procent = tail(kolejno, ile_sond_to_5_procent)
   
-  dane_wyjsciowe = list("5% sond o najmniejszej ekspresji" = najmniejsza_srednia_ekspresja_5procent,"5% sond o najwi�kszej ekspresji" = najwieksza_srednia_ekspresja_5procent)
+  dane_wyjsciowe = list("5% sond o najmniejszej ekspresji" = najmniejsza_srednia_ekspresja_5procent,"5% sond o najwiêkszej ekspresji" = najwieksza_srednia_ekspresja_5procent)
   return(dane_wyjsciowe)
   
   #return(przefiltrowane sondy)
