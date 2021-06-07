@@ -7,6 +7,9 @@ BiocManager::install("estrogen")
 BiocManager::install("hgu95av2cdf")
 BiocManager::install("affy")
 BiocManager::install("Biobase")
+install.packages("stringr")
+install.packages("devtools")
+devtools::install_github("tidyverse/stringr")
 
 
 library(affy)
@@ -15,6 +18,7 @@ library(Biobase)
 library(estrogen)
 library(seqinr)
 library(affyPLM)
+library(stringr)
 
 #WCZYTANIE SCIEZKI
 sciezka = 'C:/Users/Aneta/Desktop/studia_mgr/semestr I/WSP/laboratorium'
@@ -34,4 +38,5 @@ rma <- rma(celDat)
 save(rma, file="rma2.Rdata")
 
 # ogólnie jakby ktoś chciał to moze sie zastanowić dlaczego wczytuje tylo 195 rekordów, a nie wszystkie, czy to już jest jakaś filtracja? xd
+# sie dowiedziałam już, ze tak jakby ktos też się zastanawiał. xd
 operacje_na_sondach(rma)
