@@ -21,7 +21,7 @@ library(affyPLM)
 library(stringr)
 
 #WCZYTANIE SCIEZKI
-sciezka = 'C:/Users/Aneta/Desktop/studia_mgr/semestr I/WSP/laboratorium'
+sciezka = '/Users/madzia/Downloads/wsp'
 setwd(sciezka)
 
 #WCZYTANIE OPISU I PRZYNALEZNOSCI DO KLAS
@@ -43,7 +43,7 @@ operacje_na_sondach(rma)
 
 
 # Określenie zależności pomiędzy próbami
-pca<-prcomp(ekspresja_s,scale=TRUE)
+pca<-prcomp(rma,scale=TRUE)
 
 # Wyznaczenie odchylenia standardowego - wariancji
 pca.var <- pca$sdev^2
