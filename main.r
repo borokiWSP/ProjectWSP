@@ -7,10 +7,14 @@ BiocManager::install("estrogen")
 BiocManager::install("hgu95av2cdf")
 BiocManager::install("affy")
 BiocManager::install("Biobase")
-install.packages("stringr")
+BiocManager::install("RColorBrewerr")
+BiocManager::install("gplots")
+
+install.packages("RColorBrewer")
 install.packages("devtools")
 devtools::install_github("tidyverse/stringr")
-
+install.packages("stringr")
+install.packages("gplots")
 
 library(affy)
 library(Biobase)
@@ -19,6 +23,8 @@ library(estrogen)
 library(seqinr)
 library(affyPLM)
 library(stringr)
+library(RColorBrewer)
+library(gplots)
 
 #WCZYTANIE SCIEZKI
 sciezka = '/Users/madzia/Downloads/wsp'
@@ -85,9 +91,7 @@ pca$rotation[top10,1]
 ###### Anazliza hierarchiczna z heatmapą - muszę jeszcze skonsultować czy to na pewno takie coś chciał dostać ;) 
 # Krok 1: Przygotowanie danych
 load('rma2.Rdata') 
-
-#określam odchylenie standardowe dla wszystkich genów w próbkach i wybieram 
-#200 genów o największej zmienności.
+#określam odchylenie standardowe dla wszystkich genów w próbkach i wybieram 200 genów o największej zmienności.
 rmaAC_sd <- rowSds(exprs(rma))
 top200AC <- names(sort(rmaAC_sd, decreasing = TRUE))[1:200]
 rma_var <- rma[top200AC, ]
@@ -101,9 +105,8 @@ dist_cor <- function(x) {
 clus_wd2 <- function(x) {
   hclust(x, method = "ward.D2")
 }
-# Krok 4: Mapa ceipła dla mikromacierzy (czerwonu oznacza geny 'up-regulated'
-# czarny geny neutralne, zielony geny 'down-regulated')
 
+# Krok 4: Mapa ceipła dla mikromacierzy (czerwony oznacza geny 'up-regulated', czarny to geny neutralne, zielony geny 'down-regulated')
 redblackgreen <- colorRampPalette(c("green", "black", "red"))(n = 100)
 
 heatmap.2(exprs(rma_var), 
