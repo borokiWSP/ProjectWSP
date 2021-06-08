@@ -88,7 +88,7 @@ top10
 pca$rotation[top10,1]
 
 
-###### Anazliza hierarchiczna z heatmapą - muszę jeszcze skonsultować czy to na pewno takie coś chciał dostać ;) 
+###### Anazliza hierarchiczna z heatmapą - muszę jeszcze skonsultować czy na pewno takie coś chciał dostać ;) 
 # Krok 1: Przygotowanie danych
 load('rma2.Rdata') 
 #określam odchylenie standardowe dla wszystkich genów w próbkach i wybieram 200 genów o największej zmienności.
