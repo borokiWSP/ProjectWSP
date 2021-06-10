@@ -88,7 +88,7 @@ top10
 pca$rotation[top10,1]
 
 
-######  Klasteryzacja hierarchiczna z mapą ciepła
+######  Klasteryzacja hierarchiczna z mapą ciepła - Martyna 
 # Krok 1: Przygotowanie danych
 load('rma2.Rdata') 
 #określam wariancję dla wszystkich genów w próbkach i wybieram 200 genów o największej zmienności.
