@@ -88,12 +88,12 @@ top10
 pca$rotation[top10,1]
 
 
-######  Klasteryzacja hierarchiczna z mapą ciepła - muszę jeszcze skonsultować czy na pewno takie coś chciał dostać ;) 
+######  Klasteryzacja hierarchiczna z mapą ciepła
 # Krok 1: Przygotowanie danych
 load('rma2.Rdata') 
-#określam odchylenie standardowe dla wszystkich genów w próbkach i wybieram 200 genów o największej zmienności.
-rmaAC_sd <- rowSds(exprs(rma))
-top200AC <- names(sort(rmaAC_sd, decreasing = TRUE))[1:200]
+#określam wariancję dla wszystkich genów w próbkach i wybieram 200 genów o największej zmienności.
+rmaAC_variance <- rowVars(exprs(rma))
+top200AC <- names(sort(rmaAC_variance, decreasing = TRUE))[1:200]
 rma_var <- rma[top200AC, ]
 
 # Krok 2: Metryka odległości
