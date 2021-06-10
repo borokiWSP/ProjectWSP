@@ -110,15 +110,11 @@ clus_wd2 <- function(x) {
 redblackgreen <- colorRampPalette(c("green", "black", "red"))(n = 100)
 
 heatmap.2(exprs(rma_var), 
-          # clustering
           distfun = dist_cor, 
           hclust = clus_wd2,
-          # scaling (genes are in rows)
           scale = "row",
-          # color
           col = redblackgreen, 
           labCol=(rma_var@phenoData@data[["ADA10T1_A389_7"]]),
-          # tweaking
           trace = "none",
           density.info = "none")
 ########
