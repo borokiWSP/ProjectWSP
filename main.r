@@ -89,34 +89,7 @@ pca$rotation[top10,1]
 
 
 ######  Klasteryzacja hierarchiczna z mapą ciepła - Martyna 
-# Krok 1: Przygotowanie danych
-load('rma2.Rdata') 
-#określam wariancję dla wszystkich genów w próbkach i wybieram 200 genów o największej zmienności.
-rmaAC_variance <- rowVars(exprs(rma))
-top200AC <- names(sort(rmaAC_variance, decreasing = TRUE))[1:200]
-rma_var <- rma[top200AC, ]
+klateryzacja_hierarchiczna (rma)
 
-# Krok 2: Metryka odległości
-dist_cor <- function(x) {
-  as.dist(1 - cor(t(x), method = "pearson"))
-}
-
-# Krok 3: Metoda klasteryzacji 
-clus_wd2 <- function(x) {
-  hclust(x, method = "ward.D2")
-}
-
-# Krok 4: Mapa ceipła dla mikromacierzy (czerwony oznacza geny 'up-regulated', czarny to geny neutralne, zielony geny 'down-regulated')
-redblackgreen <- colorRampPalette(c("green", "black", "red"))(n = 100)
-
-heatmap.2(exprs(rma_var), 
-          distfun = dist_cor, 
-          hclust = clus_wd2,
-          scale = "row",
-          col = redblackgreen, 
-          labCol=(rma_var@phenoData@data[["ADA10T1_A389_7"]]),
-          trace = "none",
-          density.info = "none")
-########
 
 
