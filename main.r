@@ -67,13 +67,13 @@ pca.data <- data.frame(Sample=rownames(pca$x),
 pca.data
  
 # Wyrysowanie wykresu ggplot
-gg_2<-ggplot(data=pca.data, aes(x=X, y=Y, label=Sample)) +
+gg_2<-ggplot(data=pca.data, aes(x=X, y=Y, label=Sample, colour=red)) +
   geom_text() +
   xlab(paste("PC1 - ", pca.var.per[1], "%", sep="")) +
   ylab(paste("PC2 - ", pca.var.per[2], "%", sep="")) +
   theme_bw() +
   ggtitle("Analiza PCA")
-#gg_2 + stat_ellipse(aes(fill = PAM50s), geom="polygon",level=0.99,alpha=0.2)
+#gg_2 + stat_ellipse(aes(fill = green), geom="polygon",level=0.99,alpha=0.2)
 
 # Statystyka
 wyniki<- pca$rotation[,1]
