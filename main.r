@@ -92,4 +92,35 @@ pca$rotation[top10,1]
 klateryzacja_hierarchiczna (rma)
 
 
+#EXPRESSIONSET
+#ZALADOWANIE PLIKU
+dataDirectory <- system.file("extdata", package = "Biobase")
+exprsFile <- file.path(dataDirectory, "datasetB.txt")
+#UTWORZENIE MACIERZY
+exprs <- as.matrix(read.table(exprsFile))
+colnames(exprs)[c(1,2,3,4)] <- c("simple_annotation","CLASS","Sample","scan")
+#KLASA OBIEKTU EXPRS
+class(exprs)
+#WYMIARY MACIERZY EXPRS
+dim(exprs)
+#WYSWIETLENIE NAZW KOLUMN OBIEKTU EXPRS
+colnames(exprs)
+#WYSWIETLENIE KOLUMN 1-3
+head(exprs[, 1:4])
+#TWORZENIE MINIMALNEGO OBIEKTU EXPRESSIONSET
+minimalSet <- new("ExpressionSet", exprs = exprs)
+#TWORZENIE FENOTYPOWEGO OBIEKTU EXPRESSIONSET
+pDataFile <- file.path(dataDirectory, "datasetB.txt")
+pData <- read.table(pDataFile)
+colnames(pData)[c(1,2,3,4)] <- c("simple_annotation","CLASS","Sample","scan")
+dim(pData)
+colnames(pData)
+#PODSUMOWANIE FENOTYPU OBIEKTU EXPRESSIONSET
+summary(pData)
+#SPRAWDZA CZY NAZWY WIERSZY I KOLUMN SĄ IDENTYCZNIE UPORZĄDKOWANE
+all(rownames(pData) == colnames(exprs))
+
+
+
+
 
