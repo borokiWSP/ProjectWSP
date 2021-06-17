@@ -9,7 +9,7 @@
 # BiocManager::install("Biobase")
 # BiocManager::install("RColorBrewerr")
 # BiocManager::install("gplots")
-BiocManager::install("genefilter") #dodałam nową bibliotekę więc jej jeszcze nie zakomendowałam 
+BiocManager::install("genefilter") #dodałam nową bibliotekę więc jej jeszcze nie zakomendowałam aby każdy widział, że ją też trzeba jeszcze wgrać 
 # 
 # install.packages("RColorBrewer")
 # install.packages("devtools")
