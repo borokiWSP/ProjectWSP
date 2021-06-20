@@ -1,0 +1,204 @@
+########
+#WCZYTANIE SCIEZKI
+sciezka = 'C:/Users/Natalia/Desktop/WSP'
+setwd(sciezka)
+setwd("C:/Users/Natalia/Desktop/WSP")
+#WCZYTANIE BIBLIOTEK
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+
+BiocManager::install("estrogen")
+BiocManager::install("hgu95av2cdf")
+BiocManager::install("affy")
+BiocManager::install("Biobase")
+BiocManager::install("convert")
+BiocManager::install("affyPLM")
+library(affy)
+library(Biobase)
+library(hgu95av2cdf)
+library(estrogen)
+library(convert)
+library(seqinr)
+library(affyPLM)
+library(stringr)
+
+
+#WCZYTANIE OPISU I PRZYNALEZNOSCI DO KLAS
+pd = read.AnnotatedDataFrame("datasetB.txt", header = TRUE, sep = "\t", row.names = 1) #czytamy annotacje klas z wczesniej "ulozonego" pliku
+pData(pd) #tworzymy nowy obiekt na podstawie wczytanych annotacji
+
+#WCZYTANIE PLIKOW CEL Z OPISAMI I PRZYNALEZNOSCIA DO KLAS
+celDat = ReadAffy(filenames = rownames(pData(pd)), phenoData = pd, verbose = TRUE, celfile.path = sciezka) #bierzemy wszystkie pliki z pliku pd, wczytujemy pliki z celfile.path, phenoData to informacje o annotacjach ; i na koniec dostajmy plik zmergowany czyli data + annotacje
+
+allSets <- ls(hgu95av2cdf) #bierzemy probesety z brainarray
+allSetDat <- mget(allSets, hgu95av2cdf) #tworzymy liste
+hgu2 <- list2env(allSetDat) #tworzymy srodowisko (env) do prezentacji naszych informacji
+celDat@cdfName <- "hgu2"
+
+#NORMALIZACJA RMA
+rma12 <- rma(celDat)
+
+#ZAPISANIE PLIKU JAKO OBIEKT KLASY EXPRESSIONSET
+save(rma12, file="rma12.Rdata") # zapisujemy nasz ExpressionSet jako najbardziej basic typ danych dla jezyka R czyli RData
+#WTRĄCENIE
+A=data.frame(rma12) # A wygląda jak należy
+#save(A, file="A.xls") # zapisujemy nasz ExpressionSet jako najbardziej basic typ danych dla jezyka R czyli RData
+
+# FUNKCJA ANETY 
+
+operacje_na_sondach <- function(obiekt_expression_set) {
+  
+  # EKSRTRAKCJE SOND 
+  ekspresja = exprs(obiekt_expression_set)
+  
+  # FILTROWANIE SOND KONTROLNYCH
+  nazwy_sond = row.names(ekspresja)
+  indeksy_sond_kontrolnych = which(str_detect(nazwy_sond, "^A"))
+  pierwsza_kontrolna = indeksy_sond_kontrolnych[[1]]
+  #nowa_ekspresja = ekspresja[1:pierwsza_kontrolna-1,]  
+  if(length(indeksy_sond_kontrolnych) != 0) {
+    nowa_ekspresja = ekspresja[1:pierwsza_kontrolna-1]
+  } else {
+    nowa_ekspresja = ekspresja
+  }
+  #nowe_nazwy_sond = row.names(nowa_ekspresja)
+  
+  # ekspresja proby ADENO
+  indeksy_do_grupy_adeno = which(obiekt_expression_set@phenoData@data[["ADENO"]] == "ADENO", arr.ind = TRUE)
+  # kontrola = obiekt_expression_set@phenoData@data[["ADENO"]][which(obiekt_expression_set@phenoData@data[["ADENO"]] == "ADENO", arr.ind = TRUE)]
+  ekspresja_adeno = ekspresja[,indeksy_do_grupy_adeno[[1]]:indeksy_do_grupy_adeno[length(indeksy_do_grupy_adeno)]] # ADENO
+  srednia_ekspresja_adeno = rowSums(ekspresja_adeno)/length(indeksy_do_grupy_adeno)
+  srednia_ekspresja_adeno_po_filtracji_sond_kontrolnych = srednia_ekspresja_adeno[1:pierwsza_kontrolna-1]
+  
+  # ekspresja proby CARCINOID
+  indeksy_do_grupy_carcinoid = which(obiekt_expression_set@phenoData@data[["ADENO"]] == "CARCINOID", arr.ind = TRUE)
+  ekspresja_carcinoid = ekspresja[,indeksy_do_grupy_carcinoid[[1]]:indeksy_do_grupy_carcinoid[length(indeksy_do_grupy_carcinoid)]] # CARCINOID
+  srednia_ekspresja_carcinoid = rowSums(ekspresja_carcinoid)/length(indeksy_do_grupy_carcinoid)
+  srednia_ekspresja_carcinoid_po_filtracji_sond_kontrolnych = srednia_ekspresja_carcinoid[1:pierwsza_kontrolna-1]
+  
+  # ekspresja proby NORMAL
+  indeksy_do_grupy_normal = which(obiekt_expression_set@phenoData@data[["ADENO"]] == "NORMAL", arr.ind = TRUE)
+  ekspresja_normal = ekspresja[,indeksy_do_grupy_normal[[1]]:indeksy_do_grupy_normal[length(indeksy_do_grupy_normal)]] # NORMAL
+  srednia_ekspresja_normal = rowSums(ekspresja_normal)/length(indeksy_do_grupy_normal)
+  srednia_ekspresja_normal_po_filtracji_sond_kontrolnych = srednia_ekspresja_normal[1:pierwsza_kontrolna-1]
+  
+  # ekspresja proby SMALL CELL
+  indeksy_do_grupy_smallcell = which(obiekt_expression_set@phenoData@data[["ADENO"]] == "SMALLCELL", arr.ind = TRUE)
+  ekspresja_smallcell = ekspresja[,indeksy_do_grupy_smallcell[[1]]:indeksy_do_grupy_smallcell[length(indeksy_do_grupy_smallcell)]] # SMALL CELL
+  srednia_ekspresja_smallcell = rowSums(ekspresja_smallcell)/length(indeksy_do_grupy_smallcell)
+  srednia_ekspresja_smallcell_po_filtracji_sond_kontrolnych = srednia_ekspresja_smallcell[1:pierwsza_kontrolna-1]
+  
+  # ekspresja proby SQUAMOUS
+  indeksy_do_grupy_squamous = which(obiekt_expression_set@phenoData@data[["ADENO"]] == "SQUAMOUS", arr.ind = TRUE)
+  ekspresja_squamous = ekspresja[,indeksy_do_grupy_squamous[[1]]:indeksy_do_grupy_squamous[length(indeksy_do_grupy_squamous)]] # SQUAMOUS
+  srednia_ekspresja_squamous = rowSums(ekspresja_squamous)/length(indeksy_do_grupy_squamous)
+  srednia_ekspresja_squamous_po_filtracji_sond_kontrolnych = srednia_ekspresja_squamous[1:pierwsza_kontrolna-1]
+  
+  
+  # 5% SOND O MAX/MIN EKSPRESJI ADENO
+  ile_sond_to_5_procent = length(nowa_ekspresja)*0.05/100
+  ile_sond_to_5_procent = floor(ile_sond_to_5_procent)
+  
+  kolejno_adeno = sort(srednia_ekspresja_adeno_po_filtracji_sond_kontrolnych)
+  adeno_najwieksza_srednia_ekspresja_5procent = head(kolejno_adeno, ile_sond_to_5_procent)
+  adeno_najmniejsza_srednia_ekspresja_5procent = tail(kolejno_adeno, ile_sond_to_5_procent)
+  
+  # 5% SOND O MAX/MIN EKSPRESJI CARCINOID
+  kolejno_carcinoid = sort(srednia_ekspresja_carcinoid_po_filtracji_sond_kontrolnych)
+  carcinoid_najwieksza_srednia_ekspresja_5procent = head(kolejno_carcinoid, ile_sond_to_5_procent)
+  carcinoid_najmniejsza_srednia_ekspresja_5procent = tail(kolejno_carcinoid, ile_sond_to_5_procent)
+  
+  # 5% SOND O MAX/MIN EKSPRESJI NORMAL
+  kolejno_normal = sort(srednia_ekspresja_normal_po_filtracji_sond_kontrolnych)
+  normal_najwieksza_srednia_ekspresja_5procent = head(kolejno_normal, ile_sond_to_5_procent)
+  normal_najmniejsza_srednia_ekspresja_5procent = tail(kolejno_normal, ile_sond_to_5_procent)
+  
+  # 5% SOND O MAX/MIN EKSPRESJI SMALL CELL
+  kolejno_smallcell = sort(srednia_ekspresja_smallcell_po_filtracji_sond_kontrolnych)
+  smallcell_najwieksza_srednia_ekspresja_5procent = head(kolejno_smallcell, ile_sond_to_5_procent)
+  smallcell_najmniejsza_srednia_ekspresja_5procent = tail(kolejno_smallcell, ile_sond_to_5_procent)
+  
+  # 5% SOND O MAX/MIN EKSPRESJI SQUAMOUS
+  kolejno_squamous = sort(srednia_ekspresja_squamous_po_filtracji_sond_kontrolnych)
+  squamous_najwieksza_srednia_ekspresja_5procent = head(kolejno_squamous, ile_sond_to_5_procent)
+  squamous_najmniejsza_srednia_ekspresja_5procent = tail(kolejno_squamous, ile_sond_to_5_procent)
+  
+  
+  dane_wyjsciowe = list("5% sond o najmniejszej ekspresji adeno" = adeno_najmniejsza_srednia_ekspresja_5procent,
+                        "5% sond o najwiekszej ekspresji adeno" = adeno_najwieksza_srednia_ekspresja_5procent,
+                        "5% sond o najmniejszej ekspresji carcinoid" = carcinoid_najmniejsza_srednia_ekspresja_5procent,
+                        "5% sond o najwiekszej ekspresji carcinoid" = carcinoid_najwieksza_srednia_ekspresja_5procent,
+                        "5% sond o najmniejszej ekspresji normal" = normal_najmniejsza_srednia_ekspresja_5procent,
+                        "5% sond o najwiekszej ekspresji normal" = normal_najwieksza_srednia_ekspresja_5procent,
+                        "5% sond o najmniejszej ekspresji smallcell" = smallcell_najmniejsza_srednia_ekspresja_5procent,
+                        "5% sond o najwiekszej ekspresji smallcell" = smallcell_najwieksza_srednia_ekspresja_5procent,
+                        "5% sond o najmniejszej ekspresji squamous" = squamous_najmniejsza_srednia_ekspresja_5procent,
+                        "5% sond o najwiekszej ekspresji squamous" = squamous_najwieksza_srednia_ekspresja_5procent)
+  
+  #dane_wyjsciowe = list("5% sond o najmniejszej ekspresji" = adeno_najmniejsza_srednia_ekspresja_5procent,"5% sond o najwiekszej ekspresji" = adeno_najwieksza_srednia_ekspresja_5procent)
+  return(dane_wyjsciowe)
+  
+}
+### TUTAJ ZACZYNA SIE MOJA CZĘŚĆ - NATALIA
+# Wykorzystanie funkcji Anety
+operacje_na_sondach(rma12)
+# Wyciągnięte z funkcji :
+ekspresja = exprs(rma12)
+# FILTROWANIE SOND KONTROLNYCH
+nazwy_sond = row.names(ekspresja)
+indeksy_sond_kontrolnych = which(str_detect(nazwy_sond, "^A"))
+pierwsza_kontrolna = indeksy_sond_kontrolnych[[1]]
+
+# ekspresja proby ADENO
+indeksy_do_grupy_adeno = which(rma12@phenoData@data[["ADENO"]] == "ADENO", arr.ind = TRUE)
+# kontrola = obiekt_expression_set@phenoData@data[["ADENO"]][which(obiekt_expression_set@phenoData@data[["ADENO"]] == "ADENO", arr.ind = TRUE)]
+ekspresja_adeno = ekspresja[,indeksy_do_grupy_adeno[[1]]:indeksy_do_grupy_adeno[length(indeksy_do_grupy_adeno)]] # ADENO
+srednia_ekspresja_adeno = rowSums(ekspresja_adeno)/length(indeksy_do_grupy_adeno)
+srednia_ekspresja_adeno_po_filtracji_sond_kontrolnych = srednia_ekspresja_adeno[1:pierwsza_kontrolna-1]
+
+# ekspresja proby NORMAL
+indeksy_do_grupy_normal = which(rma12@phenoData@data[["ADENO"]] == "NORMAL", arr.ind = TRUE)
+ekspresja_normal = ekspresja[,indeksy_do_grupy_normal[[1]]:indeksy_do_grupy_normal[length(indeksy_do_grupy_normal)]] # NORMAL
+srednia_ekspresja_normal = rowSums(ekspresja_normal)/length(indeksy_do_grupy_normal)
+srednia_ekspresja_normal_po_filtracji_sond_kontrolnych = srednia_ekspresja_normal[1:pierwsza_kontrolna-1]
+
+# STATYSTYKA
+# PORÓWNANIE GRUP NORMAL I ADENO 
+# TRANSPOZYCJA MACIERZY
+T_N = t(ekspresja_normal)
+T_A = t(ekspresja_adeno)
+# PĘTLA DO WYKONYWANIA TESTU WILCOXONA
+wynik_testu=c() # pusty wektor na wyniki
+for (i in seq(length(nazwy_sond))) {
+ test=wilcox.test(T_N[,i], T_A[,i], paired = FALSE, alternative = "two.sided")
+  wynik_testu<-c(wynik_testu,test$p.value)}
+# PĘTLA DO WYCIĄGANIA NAZW SOND DLA KTÓRYCH P-WARTOŚĆ W TEŚCIE MA OKREŚLONĄ WARTOŚĆ
+Nazwy = data.frame(nazwy_sond)
+wynik=c() #pusty wektor na p-wartości
+for(i in seq(wynik_testu)){
+  if (wynik_testu[i]<= 0.0000000009){ # W TYM MIEJSCU DAJEMY WYBRANĄ P-WARTOŚĆ - WIEM ŻE NISKA ALE TO PRZEZ ILOŚĆ TESTÓW (POPRAWKA NA WIELOKROTNE TESTOWANIE)
+    wynik<-c(wynik,nazwy_sond[i]) #wektor na nazwy sond
+  }
+}
+# DO WYŚWIETLENIA - HISTOGRAM P-WARTOŚCI
+# HISTOGRAM P- WARTOŚCI 
+hist(wynik_testu,
+     main="Histogram p - wartości dla testu Wilcoxona", 
+     xlab="p-wartości", 
+     ylab = "Częstość występowania",
+     border="black", 
+     col="blue")
+# DO WYŚWIETLENIA NAZWY SOND
+Nazwy_sond_po_tescie = data.frame(wynik) # wyświetlenie nazw sond dla których p- wartość jest mniejsza niż zadana
+# DO WYŚWIETLENIA OGÓLNA LICZBA WYNIKÓW 
+length(which(wynik_testu < 0.0000000009))# Liczba wyników które uzyskaliśmy 
+# WYBRANE (po teście) GENY RÓŻNICUJĄCE
+BiocManager::install('hgu95av2')
+library("hgu95av2")
+# W SYMBOLACH SĄ TE GENY Z TESTU
+symbole<- c("1001_at" , "1596_g_at" ,"1814_at", "268_at" ,"34708_at","35868_at", "36569_at", "37196_at", "37247_at" ,"37398_at","38044_at", "38177_at", "40841_at" )
+Geny_roznicujace =mget(symbole, hgu95av2GENENAME,ifnotfound = NA)
+# DO WYŚWIETLENIA NAZWY GENÓW RÓŻNICUJĄCYCH (GG)
+GG = as.data.frame(Geny_roznicujace)
+
+
