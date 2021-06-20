@@ -88,8 +88,6 @@ top10
 pca$rotation[top10,1]
 
 
-######  Klasteryzacja hierarchiczna z mapą ciepła - Martyna 
-klateryzacja_hierarchiczna (rma)
 
 
 #EXPRESSIONSET
