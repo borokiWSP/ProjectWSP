@@ -60,6 +60,7 @@ names(normal_max)[1] <- "5% sond o największej ekspresji w klasie normal"
 
 dok <- read_pptx()
 dok <- add_slide(dok)
+# to jeszcze oczywiscie nie jest nasz raport, złożę to w najbliższej przyszłości, ale jakby ktoś chiałwiedzieć jak, to w umie wystarczy sobie stworzyć pusta prezkę i w niej to zapisywać. xd
 dok <- ph_with(dok, value = adeno_min, location = ph_location_left())
 dok <- ph_with(dok, value = adeno_max, location = ph_location_right())
 
