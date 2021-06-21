@@ -75,17 +75,21 @@ operacje_na_sondach <- function(obiekt_expression_set) {
   squamous_najwieksza_srednia_ekspresja_5procent = head(kolejno_squamous, ile_sond_to_5_procent)
   squamous_najmniejsza_srednia_ekspresja_5procent = tail(kolejno_squamous, ile_sond_to_5_procent)
   
+  # dane_wyjsciowe = list("5% sond o najmniejszej ekspresji adeno" = adeno_najmniejsza_srednia_ekspresja_5procent,
+  #                       "5% sond o najwi?kszej ekspresji adeno" = adeno_najwieksza_srednia_ekspresja_5procent,
+  #                       "5% sond o najmniejszej ekspresji carcinoid" = carcinoid_najmniejsza_srednia_ekspresja_5procent,
+  #                       "5% sond o najwi?kszej ekspresji carcinoid" = carcinoid_najwieksza_srednia_ekspresja_5procent,
+  #                       "5% sond o najmniejszej ekspresji normal" = normal_najmniejsza_srednia_ekspresja_5procent,
+  #                       "5% sond o najwi?kszej ekspresji normal" = normal_najwieksza_srednia_ekspresja_5procent,
+  #                       "5% sond o najmniejszej ekspresji smallcell" = smallcell_najmniejsza_srednia_ekspresja_5procent,
+  #                       "5% sond o najwi?kszej ekspresji smallcell" = smallcell_najwieksza_srednia_ekspresja_5procent,
+  #                       "5% sond o najmniejszej ekspresji squamous" = squamous_najmniejsza_srednia_ekspresja_5procent,
+  #                       "5% sond o najwi?kszej ekspresji squamous" = squamous_najwieksza_srednia_ekspresja_5procent)
   
   dane_wyjsciowe = list("5% sond o najmniejszej ekspresji adeno" = adeno_najmniejsza_srednia_ekspresja_5procent,
-                        "5% sond o najwiêkszej ekspresji adeno" = adeno_najwieksza_srednia_ekspresja_5procent,
-                        "5% sond o najmniejszej ekspresji carcinoid" = carcinoid_najmniejsza_srednia_ekspresja_5procent,
-                        "5% sond o najwiêkszej ekspresji carcinoid" = carcinoid_najwieksza_srednia_ekspresja_5procent,
+                        "5% sond o najwiÄ™kszej ekspresji adeno" = adeno_najwieksza_srednia_ekspresja_5procent,
                         "5% sond o najmniejszej ekspresji normal" = normal_najmniejsza_srednia_ekspresja_5procent,
-                        "5% sond o najwiêkszej ekspresji normal" = normal_najwieksza_srednia_ekspresja_5procent,
-                        "5% sond o najmniejszej ekspresji smallcell" = smallcell_najmniejsza_srednia_ekspresja_5procent,
-                        "5% sond o najwiêkszej ekspresji smallcell" = smallcell_najwieksza_srednia_ekspresja_5procent,
-                        "5% sond o najmniejszej ekspresji squamous" = squamous_najmniejsza_srednia_ekspresja_5procent,
-                        "5% sond o najwiêkszej ekspresji squamous" = squamous_najwieksza_srednia_ekspresja_5procent)
+                        "5% sond o najwiÄ™kszej ekspresji normal" = normal_najwieksza_srednia_ekspresja_5procent)
   
   #dane_wyjsciowe = list("5% sond o najmniejszej ekspresji" = adeno_najmniejsza_srednia_ekspresja_5procent,"5% sond o najwiekszej ekspresji" = adeno_najwieksza_srednia_ekspresja_5procent)
   return(dane_wyjsciowe)
