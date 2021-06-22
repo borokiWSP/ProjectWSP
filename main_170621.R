@@ -62,7 +62,15 @@ rma12 <- rma(celDat)
 save(rma12, file="rma12.Rdata") # zapisujemy nasz ExpressionSet jako najbardziej basic typ danych dla jezyka R czyli RData
 
 # FUNKCJA ANETY + NATALII
-operacje_na_sondach(rma12)
+wszystkie_klasy = operacje_na_sondach(rma12) # wyciągam wsyztkie 
+adeno_min = data.frame(wszystkie_klasy[1]) # rozkładam je by się ładnie wyświetlały bo inaczej się niestety nie da, albo przynajmneij nie umiem
+names(adeno_min)[1] <- "5% sond o najmniejszej ekspresji w klasie adeno"
+adeno_max = data.frame(wszystkie_klasy[2])
+names(adeno_max)[1] <- "5% sond o największej ekspresji w klasie adeno"
+normal_min = data.frame(wszystkie_klasy[3])
+names(normal_min)[1] <- "5% sond o najmniejszej ekspresji w klasie normal"
+normal_max = data.frame(wszystkie_klasy[4])
+names(normal_max)[1] <- "5% sond o największej ekspresji w klasie normal"
 
 # Określenie zależności pomiędzy próbami
 pca<-prcomp(rma12,scale=TRUE)
