@@ -68,14 +68,37 @@ save(rma12, file="rma12.Rdata") # zapisujemy nasz ExpressionSet jako najbardziej
 
 # FUNKCJA ANETY + NATALII
 wszystkie_klasy = operacje_na_sondach(rma12) # wyciągam wsyztkie 
+
 adeno_min = data.frame(wszystkie_klasy[1]) # rozkładam je by się ładnie wyświetlały bo inaczej się niestety nie da, albo przynajmneij nie umiem
-names(adeno_min)[1] <- "5% sond o najmniejszej ekspresji w klasie adeno"
+names_adeno_min = row.names(adeno_min)
+adeno_min_df = data.frame(names_adeno_min, adeno_min)
+names(adeno_min_df)[2] <- "Ekspresja" # zmieniam nazwy kolumn
+names(adeno_min_df)[1] <- "Nazwa sondy w klasie ADENO"
+# % sond o najmniejszej ekspresji w klasie adeno, 5% sond o największej ekspresji w klasie adeno,5% sond o najmniejszej ekspresji w klasie normal,5% sond o największej ekspresji w klasie normal 
+
 adeno_max = data.frame(wszystkie_klasy[2])
-names(adeno_max)[1] <- "5% sond o największej ekspresji w klasie adeno"
+names_adeno_max = row.names(adeno_max)
+adeno_max_df = data.frame(names_adeno_max, adeno_max)
+names(adeno_max_df)[1] <- "Nazwa sondy w klasie ADENO"
+names(adeno_max_df)[2] <- "Ekspresja"
+
 normal_min = data.frame(wszystkie_klasy[3])
-names(normal_min)[1] <- "5% sond o najmniejszej ekspresji w klasie normal"
+names_normal_min = row.names(normal_min)
+normal_min_df = data.frame(names_normal_min, normal_min)
+names(normal_min_df)[1] <- "Nazwa sondy w klasie NORMAL"
+names(normal_min_df)[2] <- "Ekspresja"
+
 normal_max = data.frame(wszystkie_klasy[4])
-names(normal_max)[1] <- "5% sond o największej ekspresji w klasie normal"
+names_normal_max = row.names(normal_max)
+normal_max_df = data.frame(names_normal_max, normal_max)
+names(normal_max_df)[1] <- "Nazwa sondy w klasie NORMAL"
+names(normal_max_df)[2] <- "Ekspresja"
+
+# jenda zbiorcza df:
+all_sond = data.frame(adeno_min_df, adeno_max_df, normal_min_df, normal_max_df) # to do apki
+all_adeno = data.frame(adeno_min_df, adeno_max_df) # to i to nizej do raportu, bo się nie mieści
+all_normal = data.frame(normal_min_df, normal_max_df)
+
 
 # Określenie zależności pomiędzy próbami
 pca<-prcomp(rma12,scale=TRUE)
