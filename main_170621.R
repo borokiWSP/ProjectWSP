@@ -17,6 +17,9 @@ BiocManager::install("genefilter") #dodałam nową bibliotekę więc jej jeszcze
 # install.packages("stringr")
 # install.packages("gplots")
 
+install.packages("factoextra")
+install.packages("doBy")
+
 #moje biblioteki
 library(affy)
 library(Biobase)
@@ -34,12 +37,14 @@ library(hgu133plus2.db)
 library(matrixStats)
 library(convert)
 library(genefilter)
+library(factoextra)
+library(doBy)
 
 
 BiocManager::install("convert")
 
 #WCZYTANIE SCIEZKI
-sciezka = 'C:/Users/alicj/Desktop/WSP-aplikacja/wsp'
+sciezka = '/Users/madzia/Documents/wsp'
 setwd(sciezka)
 
 #WCZYTANIE OPISU I PRZYNALEZNOSCI DO KLAS
@@ -82,13 +87,19 @@ pca.var <- pca$sdev^2
 # Procentowo
 pca.var.per <- round(pca.var/sum(pca.var)*100, 1)
 
-# Wyświetlenie histogramu reprezentującego wartości procentowe wariancji
-barplot(pca.var.per, main="Histogram", xlab="Składowe", ylab="Różnica procentowa", col=rainbow(length(pca.var.per)))
+# Przykładowo 10 najbardziej znaczących
+n_ogr <- 10
 
-# Wyznaczenie wartości potrzebnych do wyrysowania ggplot 
-pca.data <- data.frame(Sample=rownames(pca$x),
-                       X=pca$x[,1],
-                       Y=pca$x[,2])
+# Wyświetlenie histogramu reprezentującego wartości procentowe wariancji
+fviz_eig(pca, ncp = n_ogr)
+
+# Wyznaczenie wartości potrzebnych do wyrysowania ggplot
+max_perc <- which.maxn(pca.var.per, n_ogr)
+x_filt <- pca$x[max_perc,]
+ 
+pca.data <- data.frame(Sample=rownames(x_filt),
+                       X=x_filt[,1],
+                       Y=x_filt[,2])
 pca.data
 
 # Wyrysowanie wykresu ggplot
@@ -111,7 +122,6 @@ top10
 
 # Wyświetlnie wartości 10 najbardziej istotnych
 pca$rotation[top10,1]
-
 
 ### Klasteryzacja hierarchiczna z mapą ciepła - Martyna; DO WYŚWIETLENIA HEATMAPA
 
