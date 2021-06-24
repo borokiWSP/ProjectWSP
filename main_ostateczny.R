@@ -114,7 +114,7 @@ pca.var <- pca$sdev^2
 pca.var.per <- round(pca.var/sum(pca.var)*100, 1)
 
 # Przykładowo 10 najbardziej znaczących
-n_ogr <- 10
+n_ogr <- 5
 
 # Wyświetlenie histogramu reprezentującego wartości procentowe wariancji
 pca_hist = fviz_eig(pca, ncp = n_ogr)
