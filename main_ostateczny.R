@@ -151,6 +151,79 @@ top10
 # Wyświetlnie wartości 10 najbardziej istotnych
 pca$rotation[top10,1]
 
+### TUTAJ ZACZYNA SIE MOJA CZĘŚĆ - NATALIA
+# Wykorzystanie funkcji Anety
+# operacje_na_sondach(rma12)
+# Wyciągnięte z funkcji :
+ekspresja = exprs(rma12)
+# FILTROWANIE SOND KONTROLNYCH
+nazwy_sond = row.names(ekspresja)
+indeksy_sond_kontrolnych = which(str_detect(nazwy_sond, "^A"))
+pierwsza_kontrolna = indeksy_sond_kontrolnych[[1]]
+
+# ekspresja proby ADENO
+indeksy_do_grupy_adeno = which(rma12@phenoData@data[["ADENO"]] == "ADENO", arr.ind = TRUE)
+# kontrola = obiekt_expression_set@phenoData@data[["ADENO"]][which(obiekt_expression_set@phenoData@data[["ADENO"]] == "ADENO", arr.ind = TRUE)]
+ekspresja_adeno = ekspresja[,indeksy_do_grupy_adeno[[1]]:indeksy_do_grupy_adeno[length(indeksy_do_grupy_adeno)]] # ADENO
+srednia_ekspresja_adeno = rowSums(ekspresja_adeno)/length(indeksy_do_grupy_adeno)
+srednia_ekspresja_adeno_po_filtracji_sond_kontrolnych = srednia_ekspresja_adeno[1:pierwsza_kontrolna-1]
+
+# ekspresja proby NORMAL
+indeksy_do_grupy_normal = which(rma12@phenoData@data[["ADENO"]] == "NORMAL", arr.ind = TRUE)
+ekspresja_normal = ekspresja[,indeksy_do_grupy_normal[[1]]:indeksy_do_grupy_normal[length(indeksy_do_grupy_normal)]] # NORMAL
+srednia_ekspresja_normal = rowSums(ekspresja_normal)/length(indeksy_do_grupy_normal)
+srednia_ekspresja_normal_po_filtracji_sond_kontrolnych = srednia_ekspresja_normal[1:pierwsza_kontrolna-1]
+
+# STATYSTYKA
+# PORÓWNANIE GRUP NORMAL I ADENO 
+# TRANSPOZYCJA MACIERZY
+T_N = t(ekspresja_normal)
+T_A = t(ekspresja_adeno)
+# PĘTLA DO WYKONYWANIA TESTU WILCOXONA
+wynik_testu=c() # pusty wektor na wyniki
+for (i in seq(length(nazwy_sond))) {
+  test=wilcox.test(T_N[,i], T_A[,i], paired = FALSE, alternative = "two.sided")
+  wynik_testu<-c(wynik_testu,test$p.value)}
+# PĘTLA DO WYCIĄGANIA NAZW SOND DLA KTÓRYCH P-WARTOŚĆ W TEŚCIE MA OKREŚLONĄ WARTOŚĆ
+Nazwy = data.frame(nazwy_sond)
+wynik=c() #pusty wektor na p-wartości
+for(i in seq(wynik_testu)){
+  if (wynik_testu[i]<= 0.0000000009){ # W TYM MIEJSCU DAJEMY WYBRANĄ P-WARTOŚĆ - WIEM ŻE NISKA ALE TO PRZEZ ILOŚĆ TESTÓW (POPRAWKA NA WIELOKROTNE TESTOWANIE)
+    wynik<-c(wynik,nazwy_sond[i]) #wektor na nazwy sond
+  }
+}
+# DO WYŚWIETLENIA - HISTOGRAM P-WARTOŚCI
+# HISTOGRAM P- WARTOŚCI 
+h =  hist(wynik_testu,
+          main="Histogram p - wartości dla testu Wilcoxona", 
+          xlab="p-wartości", 
+          ylab = "Częstość występowania",
+          border="black", 
+          col="blue")
+# DO WYŚWIETLENIA NAZWY SOND
+Nazwy_sond_po_tescie = data.frame(wynik) # wyświetlenie nazw sond dla których p- wartość jest mniejsza niż zadana
+# DO WYŚWIETLENIA OGÓLNA LICZBA WYNIKÓW 
+l_wynikow = length(which(wynik_testu < 0.0000000009))# Liczba wyników które uzyskaliśmy 
+# WYBRANE (po teście) GENY RÓŻNICUJĄCE
+# BiocManager::install('hgu95av2')
+library("hgu95av2")
+# W SYMBOLACH SĄ TE GENY Z TESTU
+symbole<- c("1001_at" , "1596_g_at" ,"1814_at", "268_at" ,"34708_at","35868_at", "36569_at", "37196_at", "37247_at" ,"37398_at","38044_at", "38177_at", "40841_at" )
+Geny_roznicujace =mget(symbole, hgu95av2GENENAME,ifnotfound = NA)
+# DO WYŚWIETLENIA NAZWY GENÓW RÓŻNICUJĄCYCH (GG)
+GG1 = data.frame(Geny_roznicujace[1])
+GG2 = data.frame(Geny_roznicujace[2])
+GG3 = data.frame(Geny_roznicujace[3])
+GG4 = data.frame(Geny_roznicujace[4])
+GG5 = data.frame(Geny_roznicujace[5])
+GG6 = data.frame(Geny_roznicujace[6])
+GG7 = data.frame(Geny_roznicujace[7])
+GG8 = data.frame(Geny_roznicujace[8])
+GG9 = data.frame(Geny_roznicujace[9])
+GG10 = data.frame(Geny_roznicujace[10])
+Geny5 = data.frame(GG1, GG2, GG3, GG4, GG5)
+Geny10 = data.frame(GG6, GG7, GG8, GG9, GG10)
+
 # do pttx
 stat = data.frame(pca$rotation[top10,1])
 names_stat = row.names(stat)
