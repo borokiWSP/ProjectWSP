@@ -102,9 +102,10 @@ all_adeno = data.frame(adeno_min_df, adeno_max_df) # to i to nizej do raportu, b
 all_normal = data.frame(normal_min_df, normal_max_df)
 
 
-# PCA
-# Określenie zależności pomiędzy próbami
-pca<-prcomp(rma12,scale=TRUE)
+# ANALIZA PCA
+# Określenie zależnościci pomiędzy próbbami
+rma12_exprs <- exprs(rma12)
+pca<-prcomp(t(rma12_exprs), scale=TRUE)
 plot(pca$x[,1], pca$x[,2])
 
 # Wyznaczenie odchylenia standardowego - wariancji
@@ -113,33 +114,56 @@ pca.var <- pca$sdev^2
 # Procentowo
 pca.var.per <- round(pca.var/sum(pca.var)*100, 1)
 
-# Przykładowo 10 najbardziej znaczących
+# Przkładowo 5 najbardziej znaczczących
 n_ogr <- 5
 
 # Wyświetlenie histogramu reprezentującego wartości procentowe wariancji
-pca_hist = fviz_eig(pca, ncp = n_ogr)
+fviz_eig(pca, ncp = n_ogr)
 
 # Wyznaczenie wartości potrzebnych do wyrysowania ggplot
 max_perc <- which.maxn(pca.var.per, n_ogr)
 x_filt <- pca$x[max_perc,]
-
-pca.data <- data.frame(Sample=rownames(x_filt),
-                       X=x_filt[,1],
-                       Y=x_filt[,2])
+ 
+pca.data <- data.frame(Sample=rownames(pca$x),
+                       X=pca$x[,1],
+                       Y=pca$x[,2])
 pca.data
 
+
+
+length(pca.data)
+
+
+
+rma12_exprs2 <- rma12_exprs[, 1:n_ogr]
+Klasy <- colnames(rma12_exprs2)
+nazwy <- unique(colnames(rma12_exprs2))
+numeracja <- seq_len(ncol(rma12_exprs2))
+
+for(j in seq_along(nazwy)){
+	for(i in seq_len(ncol(rma12_exprs2))){
+      if(Klasy[i]==nazwy[j]){
+        numeracja[i] <- j}
+    }
+}
+
+a=1:195
+a[1:156]="ADENO"
+a[157:170]="NORMAL"
+a[171:195]="OTHERS( CARCINOID, SMALL CELL, SQUAMOUS"
+P=matrix(c(1:195, a), nrow=195, ncol=2)
+Klasy=P[,2]
+
 # Wyrysowanie wykresu ggplot
-gg_2<-ggplot(data=pca.data, aes(x=X, y=Y, label=Sample )) +
+gg_2<-ggplot(data=pca.data, aes(x=X, y=Y, label=".", color=Klasy)) +
   geom_text() +
   xlab(paste("PC1 - ", pca.var.per[1], "%", sep="")) +
   ylab(paste("PC2 - ", pca.var.per[2], "%", sep="")) +
   theme_bw() +
   ggtitle("Analiza PCA")
-pca_anal = gg_2 + stat_ellipse(aes(geom="polygon",level=0.99,alpha=0.2))
+gg_2 + stat_ellipse(aes(fill = Klasy), geom="polygon",level=0.99,alpha=0.2)
 
-
-
-# STATYSTYKA
+# Statystyka
 wyniki<- pca$rotation[,1]
 wyniki_abs <- abs(wyniki) #przyjęcie wartości bezwzglednej
 ranking <- sort(wyniki_abs, decreasing=TRUE) #posortowanie malejąco
