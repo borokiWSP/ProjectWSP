@@ -103,8 +103,18 @@ all_normal = data.frame(normal_min_df, normal_max_df)
 
 
 # ANALIZA PCA
+
+#wyciagniecie indeksow z macierzy
+
+
+ekspresja = exprs(rma12)
+indeksy_do_grupy_adeno = which(rma12@phenoData@data[["ADENO"]] == "ADENO", arr.ind = TRUE)
+indeksy_do_grupy_normal = which(rma12@phenoData@data[["ADENO"]] == "NORMAL", arr.ind = TRUE)
+nowa_macierz=ekspresja[,c(indeksy_do_grupy_adeno,indeksy_do_grupy_normal)]
+
+
 # Określenie zależnościci pomiędzy próbbami
-rma12_exprs <- exprs(rma12)
+rma12_exprs <- nowa_macierz
 pca<-prcomp(t(rma12_exprs), scale=TRUE)
 plot(pca$x[,1], pca$x[,2])
 
@@ -147,12 +157,12 @@ for(j in seq_along(nazwy)){
     }
 }
 
-a=1:195
-a[1:156]="ADENO"
-a[157:170]="NORMAL"
-a[171:195]="OTHERS( CARCINOID, SMALL CELL, SQUAMOUS"
-P=matrix(c(1:195, a), nrow=195, ncol=2)
-Klasy=P[,2]
+ # a=1:195
+ # a[1:156]="ADENO"
+ # a[157:170]="NORMAL"
+ # a[171:195]="OTHERS"
+ # P=matrix(c(1:195, a), nrow=195, ncol=2)
+  Klasy=(rma12@phenoData@data[["ADENO"]])[c(indeksy_do_grupy_adeno,indeksy_do_grupy_normal)] 
 
 # Wyrysowanie wykresu ggplot
 gg_2<-ggplot(data=pca.data, aes(x=X, y=Y, label=".", color=Klasy)) +
